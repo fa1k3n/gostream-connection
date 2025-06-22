@@ -1,0 +1,10 @@
+{
+	"extends": "./tsconfig.build.json",
+	"include": ["src/**/*.ts", "examples/**/*.ts"],
+	"exclude": ["node_modules/**", "scratch/**"],
+	"compilerOptions": {
+		"baseUrl": "./src",
+		"rootDir": "./src",
+		"types": ["node"]
+	}
+}
