@@ -1,6 +1,6 @@
 import { GoStreamStateUtil } from "./state";
 import { GoStream } from "./gostream"
-
+import { TransitionStyle } from "./enums";
 let device = new GoStream()
 
 let wrappedState = {
@@ -17,13 +17,16 @@ device.on('stateChanged', (newState, allChangedPaths) => {
     console.log("State changed")
     wrappedState.state = newState
     allChangedPaths.forEach((path) => {
-		const versionMatch = path.match(/info.apiVersion/)
-        if(versionMatch)
-            console.log("\t" + path + ": " + wrappedState.state.info.apiVersion)
+        console.log("\t" + path)
     })
+    console.log("\n" + JSON.stringify(wrappedState.state, null, 2))
 })
 
 device.connect('192.168.255.130', 19010)
 
-device.version()
-device.cut()
+device.init()
+//device.version()
+//device.cut()
+
+//device.setTransitionStyle(TransitionStyle.MIX)
+//device.previewTransition(true)

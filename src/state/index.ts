@@ -1,4 +1,5 @@
 import * as Info from './info'
+import * as MixEffect from './mixeffect'
 import * as GoStreamStateUtil from './util'
 
 export {
@@ -8,6 +9,7 @@ export {
 
 export interface GoStreamState {
 	info: Info.DeviceInfo,
+    mixeffect: MixEffect.MixEffect
 }
 
 export class InvalidIdError extends Error {

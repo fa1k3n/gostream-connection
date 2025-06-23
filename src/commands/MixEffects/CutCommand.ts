@@ -7,7 +7,7 @@ export class CutCommand extends BasicWritableCommand<null> {
 		super(null)
 	}
 
-	public serialize(): Buffer {
+	public serialize(): (string | number)[] {
 		// No values needed for Cut
         return null 
 	}

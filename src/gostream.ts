@@ -3,7 +3,7 @@ import { Socket } from 'net'
 import { IDeserializedCommand, VersionCommand } from './commands'
 import * as Commands from './commands'
 import crc16modbus from 'crc/crc16modbus'
-import { ProtocolVersion, ReqType } from './enums'
+import { ProtocolVersion, ReqType, TransitionStyle } from './enums'
 import { CommandParser } from './lib/gostreamCommandParser'
 import { GoStreamState, GoStreamStateUtil } from './state'
 
@@ -243,13 +243,26 @@ export class GoStream extends BasicGoStream {
         super()
 	}
 
+    public async init(): Promise<boolean> {
+        this.sendCommand(new Commands.VersionCommand(), ReqType.Get)
+        this.sendCommand(new Commands.TransitionStyleCommand(), ReqType.Get)
+        this.sendCommand(new Commands.PgmIndexCommand(), ReqType.Get)
+        this.sendCommand(new Commands.PvwIndexCommand(), ReqType.Get)
+        return true
+    }
+
     public async cut(): Promise<boolean> {
 		const command = new Commands.CutCommand()
-		return this.sendCommand(command, ReqType.Get)
+		return this.sendCommand(command)
 	}
 
-    public async version(): Promise<boolean> {
-		const command = new Commands.VersionCommand(ProtocolVersion.V1)
-		return this.sendCommand(command, ReqType.Get)
+    public async setTransitionStyle(style: TransitionStyle): Promise<boolean> {
+        const command = new Commands.TransitionStyleCommand(style)
+        return this.sendCommand(command)
+    }
+
+    public async previewTransition(on: boolean): Promise<boolean> {
+		const command = new Commands.PreviewTransitionCommand(on)
+		return this.sendCommand(command)
 	}
 }

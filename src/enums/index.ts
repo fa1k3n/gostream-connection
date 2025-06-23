@@ -7,3 +7,9 @@ export enum ReqType {
 export enum ProtocolVersion {
 	V1 = "2.2.0"  
 }
+
+export enum TransitionStyle {
+	MIX = 0,
+	DIP = 1,
+	WIPE = 2,
+}

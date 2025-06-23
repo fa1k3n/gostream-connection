@@ -35,7 +35,7 @@ export class UnknownCommand<T> extends DeserializedCommand<T> {
 } 
 
 export interface ISerializableCommand {
-	serialize(version: ProtocolVersion): Buffer
+	serialize(version: ProtocolVersion): (string | number)[]
 }
 
 export abstract class BasicWritableCommand<T> implements ISerializableCommand {
@@ -52,9 +52,9 @@ export abstract class BasicWritableCommand<T> implements ISerializableCommand {
 		this._properties = properties
 	}
 
-	public abstract serialize(version: ProtocolVersion): Buffer
+	public abstract serialize(version: ProtocolVersion): (string | number)[]
 }
 
 export abstract class SymmetricalCommand<T> extends DeserializedCommand<T> implements ISerializableCommand {
-	public abstract serialize(version: ProtocolVersion): Buffer
+	public abstract serialize(version: ProtocolVersion): (string | number)[]
 }

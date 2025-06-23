@@ -5,16 +5,16 @@ import { GoStreamState } from "../../state"
 export class VersionCommand extends DeserializedCommand<{ version: ProtocolVersion }> {
     public static readonly rawName = 'version'
 
-	constructor(version: ProtocolVersion) {
+	constructor(version?: ProtocolVersion) {
 		super({ version })
 	}
 
-	public static deserialize(value: (string | number)[]): VersionCommand {
+	public deserialize(value: (string | number)[]): VersionCommand {
 		const version = value
 		return new VersionCommand(value[0] as ProtocolVersion)
 	}
 
-    public serialize(): Buffer {
+    public serialize(): (string | number)[] {
         // No values needed for Version
         return null 
     }
