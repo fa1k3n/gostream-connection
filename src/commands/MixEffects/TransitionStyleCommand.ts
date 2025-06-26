@@ -1,8 +1,8 @@
-import { SymmetricalCommand } from "../GoStreamCommandBase"
+import { GoStreamCommand } from "../GoStreamCommandBase"
 import { GoStreamState } from "../../state"
 import { TransitionStyle } from "../../enums"
 
-export class TransitionStyleCommand extends SymmetricalCommand<{ style: TransitionStyle }> {
+export class TransitionStyleCommand extends GoStreamCommand<{ style: TransitionStyle }> {
     public static readonly rawName = 'transitionIndex'
 
     constructor(style?: TransitionStyle) {

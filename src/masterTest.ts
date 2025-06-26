@@ -1,16 +1,15 @@
 import { GoStreamStateUtil } from "./state";
 import { GoStream } from "./gostream"
-import { TransitionStyle } from "./enums";
-let device = new GoStream()
+const device = new GoStream()
 
-let wrappedState = {
+const wrappedState = {
     state: GoStreamStateUtil.Create()
 }
 device.on('connected', () => {
     console.log("Connected");
 })
 
-device.on('receivedCommands', (cmds) => {
+device.on('receivedCommands', () => {
 })
 
 device.on('stateChanged', (newState, allChangedPaths) => {
@@ -24,7 +23,10 @@ device.on('stateChanged', (newState, allChangedPaths) => {
 
 device.connect('192.168.255.130', 19010)
 
-device.init()
+//device.init()
+
+device.streamInfo(0, { enable: false, platform: "Facebook" })
+
 //device.version()
 //device.cut()
 

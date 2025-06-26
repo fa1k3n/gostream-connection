@@ -1,7 +1,7 @@
 import { GoStreamState } from "../../state"
-import { SymmetricalCommand } from "../GoStreamCommandBase"
+import { GoStreamCommand } from "../GoStreamCommandBase"
 
-export class PvwIndexCommand extends SymmetricalCommand<{pvwIndex: number}> {
+export class PvwIndexCommand extends GoStreamCommand<{pvwIndex: number}> {
     public static readonly rawName = 'pvwIndex'
 
     constructor(pvwIndex?: number) {

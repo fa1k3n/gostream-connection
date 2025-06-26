@@ -1,11 +1,11 @@
 import { GoStreamState } from "../../../state"
-import { SymmetricalCommand } from "../../GoStreamCommandBase"
+import { GoStreamCommand } from "../../GoStreamCommandBase"
 
 export interface PreviewProps {
 	preview: boolean
 }
 
-export class PreviewTransitionCommand extends SymmetricalCommand<PreviewProps> {
+export class PreviewTransitionCommand extends GoStreamCommand<PreviewProps> {
     public static readonly rawName = 'prev'
 
     constructor(preview: boolean) {

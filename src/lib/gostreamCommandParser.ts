@@ -2,6 +2,7 @@ import * as Commands from '../commands'
 import { ProtocolVersion } from '../enums'
 
 type CommandConstructor = any
+
 export class CommandParser {
 	public readonly commands: { [key: string]: Array<CommandConstructor> } = {}
 	public version: ProtocolVersion = ProtocolVersion.V1
@@ -15,7 +16,7 @@ export class CommandParser {
 					if (!this.commands[rawName]) this.commands[rawName] = []
 					this.commands[rawName].push(cmdConstructor)
 				}
-			} catch (e) {
+			} catch (_e) {
 				// probably not a valid command
 			}
 		}

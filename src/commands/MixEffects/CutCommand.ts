@@ -1,6 +1,6 @@
-import { BasicWritableCommand } from "../GoStreamCommandBase"
+import { BasicSetCommand } from "../GoStreamCommandBase"
 
-export class CutCommand extends BasicWritableCommand<null> {
+export class CutCommand extends BasicSetCommand<null> {
 	public static readonly rawName = 'cutTransition'
 
 	constructor() {
@@ -8,7 +8,6 @@ export class CutCommand extends BasicWritableCommand<null> {
 	}
 
 	public serialize(): (string | number)[] {
-		// No values needed for Cut
-        return null 
+        return [] 
 	}
 }

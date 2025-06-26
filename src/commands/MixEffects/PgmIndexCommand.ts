@@ -1,7 +1,7 @@
 import { GoStreamState } from "../../state"
-import { SymmetricalCommand } from "../GoStreamCommandBase"
+import { GoStreamCommand } from "../GoStreamCommandBase"
 
-export class PgmIndexCommand extends SymmetricalCommand<{pgmIndex: number}> {
+export class PgmIndexCommand extends GoStreamCommand<{pgmIndex: number}> {
     public static readonly rawName = 'pgmIndex'
 
     constructor(pgmIndex?: number) {

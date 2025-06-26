@@ -5,6 +5,7 @@
 	"compilerOptions": {
 		"baseUrl": "./src",
 		"rootDir": "./src",
-		"types": ["node"]
+		"types": ["jest", "node"],
+		"esModuleInterop": true,
 	}
 }

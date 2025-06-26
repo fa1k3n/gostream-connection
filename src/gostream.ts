@@ -1,11 +1,12 @@
 import { EventEmitter } from 'eventemitter3'
 import { Socket } from 'net'
-import { IDeserializedCommand, VersionCommand } from './commands'
+import { IGetCommand, VersionCommand } from './commands'
 import * as Commands from './commands'
 import crc16modbus from 'crc/crc16modbus'
 import { ProtocolVersion, ReqType, TransitionStyle } from './enums'
 import { CommandParser } from './lib/gostreamCommandParser'
 import { GoStreamState, GoStreamStateUtil } from './state'
+import { Streaming } from './state'
 
 const HEAD1 = 0xeb
 const HEAD2 = 0xa6
@@ -19,14 +20,14 @@ export type GoStreamEvents = {
 	connected: []
 	disconnected: []
     stateChanged: [GoStreamState, string[]]
-    receivedCommands: [IDeserializedCommand[]]
+    receivedCommands: [IGetCommand[]]
 }
 
 export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
     private readonly _socket: Socket
     private partialPacketBuffer: Buffer
     private readonly _commandParser: CommandParser = new CommandParser()
-    private _state: GoStreamState | undefined
+    protected _state: GoStreamState | undefined
 
 
     constructor() {
@@ -39,6 +40,7 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
         
         this._socket.on('connect', () => {
             this.emit('connected')
+            this.init()
         })
         this._socket.on('error', (err) => {
             console.log("ERROR")
@@ -52,21 +54,24 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
             this.emit('disconnected')
         })
         this._socket.on('data', (msg_data) => {
-            let cmds = this.handleGoStreamPacket(msg_data)
+            const cmds = this.handleGoStreamPacket(msg_data)
             this.emit('receivedCommands', cmds)
             this.updateState(cmds);
         })
     }
 
-    public connect(address: string, port?: number): void {
+    public connect(address: string, port: number = 19010): void {
         this._socket.connect(port, address)
     }
 
 	public async disconnect(): Promise<void> {
 	}
 
-    private updateState(cmds: IDeserializedCommand[]) {
+    public async init(): Promise<boolean> {
+        return true
+    }
 
+    private updateState(cmds: IGetCommand[]) {
         const allChangedPaths: string[] = []
 		const state = this._state
         for (const command of cmds) {
@@ -89,8 +94,8 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
 		}
     }
 
-    private handleGoStreamPacket(msg_data: Buffer): IDeserializedCommand[] {
-        const commands: IDeserializedCommand[] = []
+    private handleGoStreamPacket(msg_data: Buffer): IGetCommand[] {
+        const commands: IGetCommand[] = []
 
         let index = msg_data.indexOf(PACKET_HEAD)
         // Take care of data before start of packet, i.e. if index > 0
@@ -139,14 +144,16 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
                 this.partialPacketBuffer = Buffer.alloc(msg_data.length - index, msg_data.subarray(index))
                 break
             }
-            commands.push(this.unpackData(packet_data))
+            const unpackedData = this.unpackData(packet_data)
+            if(unpackedData)
+                commands.push(unpackedData)
             index = msg_data.indexOf(PACKET_HEAD, index + PACKET_HEADER_SIZE + packet_size)
         }
 
         return commands
     }
 
-    private unpackData(msg_data: Buffer): IDeserializedCommand {
+    private unpackData(msg_data: Buffer): IGetCommand {
         try {
             const jsonContent = this.UnpackDatas(msg_data)
             const jsonStr = jsonContent.toString('utf8')
@@ -155,7 +162,7 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
             const cmdConstructor = this._commandParser.commandFromRawName(json.id)
             if (cmdConstructor && typeof cmdConstructor.deserialize === 'function') {
 				try {
-					const cmd: IDeserializedCommand = cmdConstructor.deserialize(
+					const cmd: IGetCommand = cmdConstructor.deserialize(
 						json.value,
 						this._commandParser.version
 					)
@@ -166,7 +173,7 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
 					}
                     return cmd
 				} catch (e) {
-					this.emit('error', `Failed to deserialize command: ${cmdConstructor.constructor.name}: ${e}`)
+					this.emit('error', `Failed to deserialize command: ${e}`)
 				}
                 
             } else {
@@ -226,7 +233,7 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
         return recvCrc === calcCrc
     }
 
-    protected sendCommand(cmd: Commands.ISerializableCommand, cmdType: ReqType = ReqType.Set): boolean {
+    protected sendCommand(cmd: Commands.ISetCommand, cmdType: ReqType = ReqType.Set): boolean {
         if (this._socket !== null) {
             const json = JSON.stringify({id: (cmd.constructor as any).rawName, type: cmdType, value: cmd.serialize(ProtocolVersion.V1) })
             const data = Buffer.from(json)
@@ -245,6 +252,15 @@ export class GoStream extends BasicGoStream {
 
     public async init(): Promise<boolean> {
         this.sendCommand(new Commands.VersionCommand(), ReqType.Get)
+        this.sendCommand(new Commands.StreamOutputCommand(0), ReqType.Get)
+        this.sendCommand(new Commands.StreamOutputCommand(1), ReqType.Get)
+        this.sendCommand(new Commands.StreamOutputCommand(2), ReqType.Get)
+        this.sendCommand(new Commands.StreamPlatformCommand(0), ReqType.Get)
+        this.sendCommand(new Commands.StreamPlatformCommand(1), ReqType.Get)
+        this.sendCommand(new Commands.StreamPlatformCommand(2), ReqType.Get)
+        this.sendCommand(new Commands.LiveInfoCommand(0), ReqType.Get)
+        this.sendCommand(new Commands.LiveInfoCommand(1), ReqType.Get)
+        this.sendCommand(new Commands.LiveInfoCommand(2), ReqType.Get)
         this.sendCommand(new Commands.TransitionStyleCommand(), ReqType.Get)
         this.sendCommand(new Commands.PgmIndexCommand(), ReqType.Get)
         this.sendCommand(new Commands.PvwIndexCommand(), ReqType.Get)
@@ -259,6 +275,26 @@ export class GoStream extends BasicGoStream {
     public async setTransitionStyle(style: TransitionStyle): Promise<boolean> {
         const command = new Commands.TransitionStyleCommand(style)
         return this.sendCommand(command)
+    }
+
+    public streamInfo(streamIndex: number, set?: { enable?: boolean, platform?: string, key?: string }): boolean | Streaming.StreamInfo {
+        const commands: Commands.ISetCommand[] = []
+        
+        if(set === undefined)
+            return this._state.streaming.streamInfo[streamIndex]
+
+        if("enable" in set) {
+            commands.push(new Commands.StreamOutputCommand(streamIndex, set.enable))
+        }
+        if("platform" in set) {
+            commands.push(new Commands.StreamPlatformCommand(streamIndex, set.platform))
+        }
+      //  if("key" in options) {
+      //      commands.push(new Commands.StreamKeyCommand(streamIndex, options.key))
+      //  }
+
+        commands.forEach((cmd) => this.sendCommand(cmd))
+        return true
     }
 
     public async previewTransition(on: boolean): Promise<boolean> {

@@ -1,15 +1,18 @@
 import * as Info from './info'
 import * as MixEffect from './mixeffect'
 import * as GoStreamStateUtil from './util'
+import * as Streaming from './streaming'
 
 export {
 	Info,
+	Streaming,
     GoStreamStateUtil,
 }
 
 export interface GoStreamState {
 	info: Info.DeviceInfo,
     mixeffect: MixEffect.MixEffect
+	streaming: Streaming.Streaming
 }
 
 export class InvalidIdError extends Error {

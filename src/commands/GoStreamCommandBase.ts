@@ -8,14 +8,14 @@ export interface GoStreamCmd {
 	value?: (string | number)[]
 }
 
-export interface IDeserializedCommand {
+export interface IGetCommand {
 	properties: any
 
 	applyToState(state: GoStreamState): string | string[]
 }
 
 /** Base type for a receivable command */
-export abstract class DeserializedCommand<T> implements IDeserializedCommand {
+export abstract class GetCommand<T> implements IGetCommand {
 	public static readonly rawName?: string
 	public static readonly minimumVersion?: ProtocolVersion
 
@@ -28,17 +28,17 @@ export abstract class DeserializedCommand<T> implements IDeserializedCommand {
 	public abstract applyToState(state: GoStreamState): string | string[]
 }
 
-export class UnknownCommand<T> extends DeserializedCommand<T> {
-	public applyToState(state: GoStreamState): string | string[] {
+export class UnknownCommand<T> extends GetCommand<T> {
+	public applyToState(_state: GoStreamState): string | string[] {
 		return ""
 	}
 } 
 
-export interface ISerializableCommand {
+export interface ISetCommand {
 	serialize(version: ProtocolVersion): (string | number)[]
 }
 
-export abstract class BasicWritableCommand<T> implements ISerializableCommand {
+export abstract class BasicSetCommand<T> implements ISetCommand {
 	public static readonly rawName?: string
 	public static readonly minimumVersion?: ProtocolVersion
 
@@ -55,6 +55,6 @@ export abstract class BasicWritableCommand<T> implements ISerializableCommand {
 	public abstract serialize(version: ProtocolVersion): (string | number)[]
 }
 
-export abstract class SymmetricalCommand<T> extends DeserializedCommand<T> implements ISerializableCommand {
+export abstract class GoStreamCommand<T> extends GetCommand<T> implements ISetCommand {
 	public abstract serialize(version: ProtocolVersion): (string | number)[]
 }

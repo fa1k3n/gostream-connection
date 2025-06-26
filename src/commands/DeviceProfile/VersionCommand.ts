@@ -1,16 +1,15 @@
-import { DeserializedCommand } from "../GoStreamCommandBase"
+import { GoStreamCommand } from "../GoStreamCommandBase"
 import { ProtocolVersion } from "../../enums"
 import { GoStreamState } from "../../state"
 
-export class VersionCommand extends DeserializedCommand<{ version: ProtocolVersion }> {
+export class VersionCommand extends GoStreamCommand<{ version: ProtocolVersion }> {
     public static readonly rawName = 'version'
 
 	constructor(version?: ProtocolVersion) {
 		super({ version })
 	}
 
-	public deserialize(value: (string | number)[]): VersionCommand {
-		const version = value
+	public static deserialize(value: (string | number)[]): VersionCommand {
 		return new VersionCommand(value[0] as ProtocolVersion)
 	}
 

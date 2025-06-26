@@ -13,3 +13,9 @@ export enum TransitionStyle {
 	DIP = 1,
 	WIPE = 2,
 }
+
+export enum LiveStatus {
+	Off,
+	OnAir,
+	Abnormal,
+}
