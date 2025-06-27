@@ -73,6 +73,6 @@ jobs:
       - name: Check docs generation
         if: matrix.node-version == '18.x'
         run: |
-          yarn docs:test
+          yarn doc
         env:
           CI: true
