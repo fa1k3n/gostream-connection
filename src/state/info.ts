@@ -1,5 +1,5 @@
-import { ProtocolVersion } from "../enums"
+import { ProtocolVersion } from "../enums";
 
 export interface DeviceInfo {
-	apiVersion: ProtocolVersion
+  apiVersion: ProtocolVersion;
 }

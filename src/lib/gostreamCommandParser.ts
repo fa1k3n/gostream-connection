@@ -1,31 +1,31 @@
-import * as Commands from '../commands'
-import { ProtocolVersion } from '../enums'
+import * as Commands from "../commands";
+import { ProtocolVersion } from "../enums";
 
-type CommandConstructor = Commands.IGetCommand | Commands.ISetCommand
+type CommandConstructor = Commands.IGetCommand | Commands.ISetCommand;
 
 export class CommandParser {
-	public readonly commands: Record<string, CommandConstructor[]> = {}
-	public version: ProtocolVersion = ProtocolVersion.V1
+  public readonly commands: Record<string, CommandConstructor[]> = {};
+  public version: ProtocolVersion = ProtocolVersion.V1;
 
-	constructor() {
-		for (const cmd in Commands) {
-			try {
-				const cmdConstructor = (Commands as unknown)[cmd]
-				const rawName = cmdConstructor.rawName
-				if (rawName) {
-					if (!this.commands[rawName]) this.commands[rawName] = []
-					this.commands[rawName].push(cmdConstructor)
-				}
-			} catch (_e) {
-				// probably not a valid command
-			}
-		}
-	}
+  constructor() {
+    for (const cmd in Commands) {
+      try {
+        const cmdConstructor = (Commands as unknown)[cmd];
+        const rawName = cmdConstructor.rawName;
+        if (rawName) {
+          if (!this.commands[rawName]) this.commands[rawName] = [];
+          this.commands[rawName].push(cmdConstructor);
+        }
+      } catch (_e) {
+        // probably not a valid command
+      }
+    }
+  }
 
-	public commandFromRawName(name: string): CommandConstructor | undefined {
-		const commands = this.commands[name]
-		return commands[0]
-		/*if (commands) {
+  public commandFromRawName(name: string): CommandConstructor | undefined {
+    const commands = this.commands[name];
+    return commands[0];
+    /*if (commands) {
 			if (!this.version) {
 				// edge case for the version command itself:
 				return commands[0]
@@ -52,6 +52,6 @@ export class CommandParser {
 				return highestProtoCommand
 			}
 		}*/
-		return undefined
-	}
+    return undefined;
+  }
 }

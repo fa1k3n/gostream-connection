@@ -1,11 +1,11 @@
 {
-	"extends": "./tsconfig.build.json",
-	"include": ["src/**/*.ts", "examples/**/*.ts"],
-	"exclude": ["node_modules/**", "scratch/**"],
-	"compilerOptions": {
-		"baseUrl": "./src",
-		"rootDir": "./src",
-		"types": ["jest", "node"],
-		"esModuleInterop": true,
-	}
+  "extends": "./tsconfig.build.json",
+  "include": ["src/**/*.ts", "examples/**/*.ts"],
+  "exclude": ["node_modules/**", "scratch/**"],
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "rootDir": "./src",
+    "types": ["jest", "node"],
+    "esModuleInterop": true
+  }
 }

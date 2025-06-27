@@ -1,1 +1,1 @@
-export * from './gostream'
+export * from "./gostream";

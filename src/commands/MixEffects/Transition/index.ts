@@ -1,1 +1,1 @@
-export * from './TransitionPreviewCommand'
+export * from "./TransitionPreviewCommand";

@@ -6,7 +6,6 @@
   "repository": "git@github.com:fa1k3n/gostream-connection.git",
   "author": "Johan Falkenström",
   "license": "MIT",
-  "private": false,
   "scripts": {
     "postinstall": "husky",
     "format": "prettier -w .",
@@ -29,6 +28,7 @@
     "husky": "^9.1.7",
     "jest": "^30.0.2",
     "node": "^24.2.0",
+    "prettier": "^3.6.2",
     "rimraf": "^5.0.10",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
@@ -40,5 +40,6 @@
     "crc": "^4.3.2",
     "eventemitter3": "^5.0.1",
     "net": "^1.0.2"
-  }
+  },
+  "packageManager": "yarn@4.9.2"
 }

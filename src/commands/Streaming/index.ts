@@ -1,1 +1,1 @@
-export * from './StreamInfoCommands'
+export * from "./StreamInfoCommands";
