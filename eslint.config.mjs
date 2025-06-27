@@ -1,25 +1,28 @@
-import js from "@eslint/js";
 import globals from "globals";
 import tseslint from "typescript-eslint";
-import { defineConfig } from "eslint/config";
 
-export default defineConfig([
-  {
-    rules: { 
-      "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-      "@typescript-eslint/no-explicit-any": "off",
-    },
-  },
+export default tseslint.config([
   { ignores: ["dist/*", "coverage/*"] },
-  { 
-    files: ["src/**/*.{ts}"],  
-    plugins: { js }, 
-    extends: ["js/recommended"],
-  },
   { 
     files: ["src/**/*.{ts}"], 
     languageOptions: { globals: globals.browser } 
   },
 
-  tseslint.configs.recommended,
+  tseslint.configs.strict,
+  tseslint.configs.stylistic,
+    {
+    rules: { 
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": ["error", { 
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }],
+      "@typescript-eslint/no-explicit-any": "off",
+    },
+  },
 ]);

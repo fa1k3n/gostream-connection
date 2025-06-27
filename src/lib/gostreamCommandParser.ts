@@ -4,13 +4,13 @@ import { ProtocolVersion } from '../enums'
 type CommandConstructor = Commands.IGetCommand | Commands.ISetCommand
 
 export class CommandParser {
-	public readonly commands: { [key: string]: Array<CommandConstructor> } = {}
+	public readonly commands: Record<string, CommandConstructor[]> = {}
 	public version: ProtocolVersion = ProtocolVersion.V1
 
 	constructor() {
 		for (const cmd in Commands) {
 			try {
-				const cmdConstructor = (Commands as any)[cmd]
+				const cmdConstructor = (Commands as unknown)[cmd]
 				const rawName = cmdConstructor.rawName
 				if (rawName) {
 					if (!this.commands[rawName]) this.commands[rawName] = []

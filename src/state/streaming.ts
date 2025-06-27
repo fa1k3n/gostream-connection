@@ -1,6 +1,6 @@
 import { LiveStatus } from "../enums"
 
-export type StreamInfo = {
+export interface StreamInfo {
     enable: boolean
     status: LiveStatus
     platform: string

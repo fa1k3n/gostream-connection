@@ -56,5 +56,7 @@ export abstract class BasicSetCommand<T> implements ISetCommand {
 }
 
 export abstract class GoStreamCommand<T> extends GetCommand<T> implements ISetCommand {
+	public static readonly rawName?: string
+	public static readonly minimumVersion?: ProtocolVersion
 	public abstract serialize(version: ProtocolVersion): (string | number)[]
 }

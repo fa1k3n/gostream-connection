@@ -13,7 +13,7 @@ const HEAD2 = 0xa6
 const PACKET_HEADER_SIZE = 5
 const PACKET_HEAD = new Uint8Array([HEAD1, HEAD2])
 
-export type GoStreamEvents = {
+export interface GoStreamEvents {
 	error: [string]
 	info: [string]
 	debug: [string]
@@ -47,8 +47,8 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
             this.emit('error', err.message)
         })
         this._socket.on('drain', () => {
-            
-        })
+            console.log('drain')
+        })  
         this._socket.on('end', () => {
             this._socket?.destroy()
             this.emit('disconnected')
@@ -60,11 +60,12 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
         })
     }
 
-    public connect(address: string, port: number = 19010): void {
+    public connect(address: string, port = 19010): void {
         this._socket.connect(port, address)
     }
 
 	public async disconnect(): Promise<void> {
+        console.log('disconnect')
 	}
 
     public async init(): Promise<boolean> {
@@ -246,10 +247,7 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
 }
 
 export class GoStream extends BasicGoStream {
-    constructor() {
-        super()
-	}
-
+ 
     public async init(): Promise<boolean> {
         this.sendCommand(new Commands.VersionCommand(), ReqType.Get)
         this.sendCommand(new Commands.StreamOutputCommand(0), ReqType.Get)

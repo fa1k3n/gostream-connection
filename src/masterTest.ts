@@ -9,9 +9,6 @@ device.on('connected', () => {
     console.log("Connected");
 })
 
-device.on('receivedCommands', () => {
-})
-
 device.on('stateChanged', (newState, allChangedPaths) => {
     console.log("State changed")
     wrappedState.state = newState

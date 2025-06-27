@@ -16,12 +16,12 @@ export interface GoStreamState {
 }
 
 export class InvalidIdError extends Error {
-	constructor(message: string, ...ids: Array<number | string>) {
+	constructor(message: string, ...ids: (number | string)[]) {
 		super(InvalidIdError.BuildErrorString(message, ids))
 		Object.setPrototypeOf(this, new.target.prototype)
 	}
 
-	private static BuildErrorString(message: string, ids: Array<number | string>): string {
+	private static BuildErrorString(message: string, ids: (number | string)[]): string {
 		if (ids && ids.length > 0) {
 			return `${message} ${ids.join('-')} is not valid`
 		} else {
