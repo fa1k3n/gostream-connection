@@ -1,7 +1,7 @@
 import * as Commands from '../commands'
 import { ProtocolVersion } from '../enums'
 
-type CommandConstructor = any
+type CommandConstructor = Commands.IGetCommand | Commands.ISetCommand
 
 export class CommandParser {
 	public readonly commands: { [key: string]: Array<CommandConstructor> } = {}
@@ -24,7 +24,8 @@ export class CommandParser {
 
 	public commandFromRawName(name: string): CommandConstructor | undefined {
 		const commands = this.commands[name]
-		if (commands) {
+		return commands[0]
+		/*if (commands) {
 			if (!this.version) {
 				// edge case for the version command itself:
 				return commands[0]
@@ -50,7 +51,7 @@ export class CommandParser {
 
 				return highestProtoCommand
 			}
-		}
+		}*/
 		return undefined
 	}
 }

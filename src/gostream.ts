@@ -160,7 +160,7 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents>  {
             const json = JSON.parse(jsonStr)
 
             const cmdConstructor = this._commandParser.commandFromRawName(json.id)
-            if (cmdConstructor && typeof cmdConstructor.deserialize === 'function') {
+            if (cmdConstructor && "deserialize" in cmdConstructor && typeof cmdConstructor.deserialize === 'function') {
 				try {
 					const cmd: IGetCommand = cmdConstructor.deserialize(
 						json.value,
