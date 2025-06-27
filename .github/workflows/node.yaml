@@ -59,9 +59,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
       - name: Prepare Environment
         run: |
-          yarn install
+          yarn install --immutable
         env:
           CI: true
       - name: Run tests
