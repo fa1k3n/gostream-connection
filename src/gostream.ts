@@ -54,8 +54,10 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents> {
     });
     this._socket.on("data", (msg_data) => {
       const cmds = this.handleGoStreamPacket(msg_data);
-      this.emit("receivedCommands", cmds);
-      this.updateState(cmds);
+      if (cmds.length > 0) {
+        this.emit("receivedCommands", cmds);
+        this.updateState(cmds);
+      }
     });
   }
 
@@ -191,11 +193,10 @@ export class BasicGoStream extends EventEmitter<GoStreamEvents> {
           this.emit("error", `Failed to deserialize command: ${e}`);
         }
       } else {
-        console.log("Unknown command", json.id);
-        return new Commands.UnknownCommand(ProtocolVersion.V1);
+        this.emit("error", `Unknown command: ${json.id}`);
       }
     } catch (err) {
-      console.log("Error", err);
+      this.emit("error", `Failed to unpack data: ${err}`);
     }
 
     return;

@@ -24,7 +24,7 @@ export class CommandParser {
 
   public commandFromRawName(name: string): CommandConstructor | undefined {
     const commands = this.commands[name];
-    return commands[0];
+    if (commands) return commands[0];
     /*if (commands) {
 			if (!this.version) {
 				// edge case for the version command itself:
